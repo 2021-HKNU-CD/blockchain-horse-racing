@@ -20,13 +20,13 @@ contract HorseRacingGame {
 
 
   constructor() public {
-    admin = msg.sender;
+    manager = msg.sender;
   }
 
   function betting(uint _horseNumber) public payable { // 배팅최소금액 1이더로 설정, horseNumber = 베팅하고 싶은 말 번호
     require(msg.value >= 1 ether);
-
-    players.push(msg.sender, _horseNumber); // 배열에 참가자들을 넣는다.
+    
+    players.push(player(msg.sender, _horseNumber)); // 배열에 참가자들을 넣는다.
   }
 
 
