@@ -2,31 +2,36 @@ pragma solidity ^0.4.21;
 
 contract HorseRacingGame {
   address public manager;
-  
-  // 게임 참여자 구조체
-  struct player {
-    address playerAddress;
-    uint bettingNumber;
-  }
+  address[] public players;
 
-  // 솔리디티에서 정수 사용 불가 -> 일단 임시 배당금 배열
-  uint[] public dividend = [3,2,1,1,0,0,0,0,0,0];
-  
-  // player 구조체 배열
-  player[] public players; 
-  
   // 경주마들 (index로 생각 = 0번 말 ~ 9번 말)
   uint[] public racingHorses = [0,1,2,3,4,5,6,7,8,9];
 
+  // 일단 사용 안함
+  // uint[] public dividend = [3,2,1];
 
+  // 베팅 금액 저장할 배열
+  uint[] public bettingMoney;
+
+  // User가 베팅하는 
+  uint[] public userChoiceHorse;
+  
+  uint public firstHorse;
+  uint public secondHorse;
+  uint public thirdHorse;
+
+  // 컨트랙트를 Deploy 하는 계정 -> manager
   constructor() public {
     manager = msg.sender;
   }
 
   function betting(uint _horseNumber) public payable { // 배팅최소금액 1이더로 설정, horseNumber = 베팅하고 싶은 말 번호
     require(msg.value >= 1 ether);
+    require(msg.value <= 4 ether);
     
-    players.push(player(msg.sender, _horseNumber)); // 배열에 참가자들을 넣는다.
+    players.push(msg.sender); // 배열에 사용자들을 넣는다.
+    bettingMoney.push(msg.value); // 배열에 사용자들의 베팅 금액을 넣는다.
+    userChoiceHorse.push(_horseNumber); // 배열에 사용자들이 선택한 말의 번호를 넣는다. 
   }
 
 
@@ -42,14 +47,37 @@ contract HorseRacingGame {
 
   // 
   function transferDividend() public restricted {
-
-    uint index = 0;
-
-    players[index].transfer(address(this).balance); // 당첨된 배열 인덱스의 계좌로 송금
-
+    firstHorse = racingHorses[0];
+    secondHorse = racingHorses[1];
+    thirdHorse = racingHorses[2];
+    prizeFirst();
+    
     players = new address[](0); // 게임이 끝나면 배열 초기화
   }
 
+  function prizeFirst() public {  
+    for(uint i=0; i<players.length; i++) {
+      if(userChoiceHorse[i] == firstHorse) {
+        players[i].transfer(bettingMoney[i] * 3);
+      }
+    }
+  }
+
+  function prizeSecond() public {  
+    for(uint i=0; i<players.length; i++) {
+      if(userChoiceHorse[i] == secondHorse) {
+        players[i].transfer(bettingMoney[i] * 2);
+      }
+    }
+  }
+
+  function prizeFirst() public {  
+    for(uint i=0; i<players.length; i++) {
+      if(userChoiceHorse[i] == thirdHorse) {
+        players[i].transfer(bettingMoney[i]);
+      }
+    }
+  }
 
   function getPlayers() public view returns (address[]) { // 게임 참가자를 보여준다.
     return players;
@@ -60,10 +88,3 @@ contract HorseRacingGame {
     _;
   }
 }
-
-
-  // 사실 상 안쓰는 코드
-  // function random() private view returns (uint) {  // random값을 뽑아준다.
-  //   return uint(keccak256(abi.encodePacked(block.difficulty, now, players)));
-  // }
-  
