@@ -37,25 +37,26 @@ contract HorseRacingGame {
 
   // 랜덤으로 horse 등수 정하기 --> random 기반
   function startRacing() public {
-        for (uint256 i = 0; i < racingHorses.length; i++) {
-            uint256 n = i + uint256(keccak256(abi.encodePacked(now))) % (racingHorses.length - i);
-            uint256 temp = racingHorses[n];
-            racingHorses[n] = racingHorses[i];
-            racingHorses[i] = temp;
-        }
+    for (uint256 i = 0; i < racingHorses.length; i++) {
+        uint256 n = i + uint256(keccak256(abi.encodePacked(now))) % (racingHorses.length - i);
+        uint256 temp = racingHorses[n];
+        racingHorses[n] = racingHorses[i];
+        racingHorses[i] = temp;
+    }
   }
 
   // 
   function transferDividend() public restricted {
-    firstHorse = racingHorses[0];
-    secondHorse = racingHorses[1];
-    thirdHorse = racingHorses[2];
-    prizeFirst();
     
+    prizeFirst();
+    prizeSecond();
+    prizeThird();
+
     players = new address[](0); // 게임이 끝나면 배열 초기화
   }
 
   function prizeFirst() public {  
+    firstHorse = racingHorses[0];
     for(uint i=0; i<players.length; i++) {
       if(userChoiceHorse[i] == firstHorse) {
         players[i].transfer(bettingMoney[i] * 3);
@@ -64,6 +65,7 @@ contract HorseRacingGame {
   }
 
   function prizeSecond() public {  
+    secondHorse = racingHorses[1];
     for(uint i=0; i<players.length; i++) {
       if(userChoiceHorse[i] == secondHorse) {
         players[i].transfer(bettingMoney[i] * 2);
@@ -71,7 +73,8 @@ contract HorseRacingGame {
     }
   }
 
-  function prizeFirst() public {  
+  function prizeThird() public {  
+    thirdHorse = racingHorses[2];
     for(uint i=0; i<players.length; i++) {
       if(userChoiceHorse[i] == thirdHorse) {
         players[i].transfer(bettingMoney[i]);
