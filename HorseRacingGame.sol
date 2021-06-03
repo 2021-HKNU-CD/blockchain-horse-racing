@@ -36,7 +36,7 @@ contract HorseRacingGame {
 
 
   // 랜덤으로 horse 등수 정하기 --> random 기반
-  function startRacing() public {
+  function startRacing() public restricted {
     for (uint256 i = 0; i < racingHorses.length; i++) {
         uint256 n = i + uint256(keccak256(abi.encodePacked(now))) % (racingHorses.length - i);
         uint256 temp = racingHorses[n];
@@ -55,7 +55,7 @@ contract HorseRacingGame {
     players = new address[](0); // 게임이 끝나면 배열 초기화
   }
 
-  function prizeFirst() public {  
+  function prizeFirst() public restricted {  
     firstHorse = racingHorses[0];
     for(uint i=0; i<players.length; i++) {
       if(userChoiceHorse[i] == firstHorse) {
@@ -64,7 +64,7 @@ contract HorseRacingGame {
     }
   }
 
-  function prizeSecond() public {  
+  function prizeSecond() public restricted {  
     secondHorse = racingHorses[1];
     for(uint i=0; i<players.length; i++) {
       if(userChoiceHorse[i] == secondHorse) {
@@ -73,7 +73,7 @@ contract HorseRacingGame {
     }
   }
 
-  function prizeThird() public {  
+  function prizeThird() public restricted {  
     thirdHorse = racingHorses[2];
     for(uint i=0; i<players.length; i++) {
       if(userChoiceHorse[i] == thirdHorse) {
