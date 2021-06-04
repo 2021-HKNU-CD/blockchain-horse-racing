@@ -5,10 +5,7 @@ contract HorseRacingGame {
   address[] public players;
 
   // 경주마들 (index로 생각 = 0번 말 ~ 9번 말)
-  uint[] public racingHorses = [0,1,2,3,4,5,6,7,8,9];
-
-  // 일단 사용 안함
-  // uint[] public dividend = [3,2,1];
+  uint[] public racingHorses = [1,2,3,4,5,6,7,8,9,10];
 
   // 베팅 금액 저장할 배열
   uint[] public bettingMoney;
@@ -59,7 +56,7 @@ contract HorseRacingGame {
     firstHorse = racingHorses[0];
     for(uint i=0; i<players.length; i++) {
       if(userChoiceHorse[i] == firstHorse) {
-        players[i].transfer(bettingMoney[i] * 3);
+        players[i].transfer(bettingMoney[i] * 4);
       }
     }
   }
@@ -68,7 +65,7 @@ contract HorseRacingGame {
     secondHorse = racingHorses[1];
     for(uint i=0; i<players.length; i++) {
       if(userChoiceHorse[i] == secondHorse) {
-        players[i].transfer(bettingMoney[i] * 2);
+        players[i].transfer(bettingMoney[i] * 3);
       }
     }
   }
@@ -77,7 +74,7 @@ contract HorseRacingGame {
     thirdHorse = racingHorses[2];
     for(uint i=0; i<players.length; i++) {
       if(userChoiceHorse[i] == thirdHorse) {
-        players[i].transfer(bettingMoney[i]);
+        players[i].transfer(bettingMoney[i] * 2);
       }
     }
   }
